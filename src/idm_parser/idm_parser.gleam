@@ -1,4 +1,4 @@
-// todo モジュール名が xml_parser/xml_parserになっていて微妙だから直したい
+// todo モジュール名が idm_parser/idm_parserになっていて微妙だから直したい
 
 pub type IDMPass {
   IDMItem(

@@ -1,5 +1,5 @@
 import gleeunit
-import xml_parser/xml_parser
+import idm_parser/idm_parser
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -25,7 +25,7 @@ pub fn xml_parse_test() {
         </item>
         </folder>"
 
-  assert xml_parser.parse(build_xml(body_xml))
+  assert idm_parser.parse(build_xml(body_xml))
     == [
       build_idm_pass_folder("Dummy Folder", [
         build_idm_pass_item(
@@ -43,7 +43,7 @@ pub fn xml_parse_test() {
 
 pub fn empty_text_test() {
   // XMLテキストが空文字の場合は空のList(IDMPass)を返す
-  assert xml_parser.parse("") == []
+  assert idm_parser.parse("") == []
 }
 
 pub fn empty_item_test() {
@@ -52,13 +52,13 @@ pub fn empty_item_test() {
   let body_xml =
     "<folder name=\"Dummy Folder\" open=\"true\" selected=\"false\"></folder>"
 
-  assert xml_parser.parse(build_xml(body_xml))
+  assert idm_parser.parse(build_xml(body_xml))
     == [build_idm_pass_folder("Dummy Folder", [])]
 }
 
 pub fn empty_item_and_folder_test() {
   // アイテムもフォルダも無い場合は空リストを返す
-  assert xml_parser.parse(build_xml("")) == []
+  assert idm_parser.parse(build_xml("")) == []
 }
 
 pub fn invalid_idmpass_mapping_test() {
@@ -93,7 +93,7 @@ pub fn invalid_idmpass_mapping_test() {
             <pasteType>0</pasteType>
         </item>
         </folder>"
-  assert xml_parser.parse(build_xml(body_xml))
+  assert idm_parser.parse(build_xml(body_xml))
     == [
       build_idm_pass_folder("Dummy Folder", [
         build_idm_pass_item(
@@ -120,9 +120,9 @@ pub fn invalid_idmpass_mapping_test() {
 
 fn build_idm_pass_folder(
   title: String,
-  children: List(xml_parser.IDMPass),
-) -> xml_parser.IDMPass {
-  xml_parser.IDMFolder(title, children:)
+  children: List(idm_parser.IDMPass),
+) -> idm_parser.IDMPass {
+  idm_parser.IDMFolder(title, children:)
 }
 
 fn build_idm_pass_item(
@@ -133,8 +133,8 @@ fn build_idm_pass_item(
   item2: #(String, String),
   comment: String,
   url: String,
-) -> xml_parser.IDMPass {
-  xml_parser.IDMItem(
+) -> idm_parser.IDMPass {
+  idm_parser.IDMItem(
     title,
     account,
     password,
