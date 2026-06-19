@@ -31,7 +31,7 @@ process_node(Node) ->
     
 
 is_target_element(#xmlElement{name = Name}) ->
-    io:format("Name: ~p~n", [Name]),
+    % io:format("Name: ~p~n", [Name]),
     not lists:member(Name, [
         'familyName',
         'givenName',
@@ -100,24 +100,20 @@ filter_element(Child) ->
 
 trim_xml_element(#xmlElement{name = 'idmData', content = Children}) ->
     % io:format("Children: ~p~n", [Children]),
-    % このChildrenは複数件になるのか？
     [
         Child || Child <- Children, filter_element(Child)
     ].
-
-
-% これじゃ足りない
-% do_process(#xmlElement{content = Content}) ->
-    % [process_node(E) || E <- Content, is_record(E, xmlElement)].
 
 
 do_process_node(TargetNodes) ->
     % io:format("TargetNodes: ~p~n", [TargetNodes]),
     % length(TargetNodes)は1件だけ
     io:format("call do_process_node ~n"),
+    % TargetNodesがリストじゃないケースもあるのでlengthに渡すとエラーになる
     % io:format("TargetNodes size: ~p~n", [length(TargetNodes)]),
 
     % TargetNodesは1件だけしか入っていないので取り出す
+    % 1件じゃないケースもあるので分岐する
     Element = case TargetNodes of
                  [T] -> T;
                  _ -> TargetNodes
@@ -177,7 +173,7 @@ do_process_node_item(#xmlElement{name = 'item', attributes = Attrs, content = Co
         {comment, Comment},
         {url, Url}
     ] = lists:filter(
-        % リスト内包表記によって返却されたリストの中からnilを取り除く
+        % リスト内包表記によって返却されたリストの中からunuseを取り除く
         fun(I) -> I =/= unuse end,
         [fetch_item_field(I) || I <- Content, is_record(I, xmlElement)]
         ),
