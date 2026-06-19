@@ -60,40 +60,12 @@ is_target_element(#xmlElement{name = Name}) ->
         'pasteTypeList'
     ]).
 
-
-    % <familyName></familyName>
-    % <givenName></givenName>
-    % <familyNamePhonetic></familyNamePhonetic>
-    % <givenNamePhonetic></givenNamePhonetic>
-    % <familyNamePhonetic2></familyNamePhonetic2>
-    % <givenNamePhonetic2></givenNamePhonetic2>
-    % <e-mail1></e-mail1>
-    % <e-mail2></e-mail2>
-    % <e-mail3></e-mail3>
-    % <zip1></zip1>
-    % <prefecture1></prefecture1>
-    % <address1></address1>
-    % <zip2></zip2>
-    % <prefecture2></prefecture2>
-    % <address2></address2>
-    % <tel1></tel1>
-    % <tel2></tel2>
-    % <handlename1></handlename1>
-    % <handlename2></handlename2>
-    % <company></company>
-    % <defaultAccountName>Account ID</defaultAccountName>
-    % <defaultPasswordName>Password</defaultPasswordName>
-    % <defaultItem1Name></defaultItem1Name>
-    % <defaultItem2Name></defaultItem2Name>
-    % <pasteTypeList></pasteTypeList>
-
-
 filter_element(Child) ->
     % io:format("Child: ~p~n", [Child]),
     case Child of
         %% 一旦すべての xmlElement を変数「E」として受ける
         E when is_record(E, xmlElement) -> 
-            io:format("is_target_element: ~p~n", [is_target_element(E)]),
+            % io:format("is_target_element: ~p~n", [is_target_element(E)]),
             is_target_element(E);
         _ -> false
     end.
@@ -108,7 +80,7 @@ trim_xml_element(#xmlElement{name = 'idmData', content = Children}) ->
 do_process_node(TargetNodes) ->
     % io:format("TargetNodes: ~p~n", [TargetNodes]),
     % length(TargetNodes)は1件だけ
-    io:format("call do_process_node ~n"),
+    % io:format("call do_process_node ~n"),
     % TargetNodesがリストじゃないケースもあるのでlengthに渡すとエラーになる
     % io:format("TargetNodes size: ~p~n", [length(TargetNodes)]),
 
@@ -121,11 +93,11 @@ do_process_node(TargetNodes) ->
 
     case Element of
         #xmlElement{name = 'folder'} -> 
-            io:format("match folder ~n"),
+            % io:format("match folder ~n"),
             % io:format("folder element: ~p~n", [Element]),
             do_process_node_folder(Element);
         #xmlElement{name = 'item'} -> 
-            io:format("match item ~n"),
+            % io:format("match item ~n"),
             do_process_node_item(Element);
         _ -> "" % ここの分岐には来ていない
     end.
@@ -134,7 +106,7 @@ do_process_node(TargetNodes) ->
 % nameは要素名、attributesは要素が持つ属性の配列、contentは要素が持つ子要素の配列
 %  この関数ではパターンマッチによって要素名がfolderの要素のみを引き受け、attributesをAttrsという変数、contentをContentという変数に束縛している
 do_process_node_folder(#xmlElement{name = 'folder', attributes = Attrs, content = Content}) ->
-    io:format("call do_process_node_folder ~n"),
+    % io:format("call do_process_node_folder ~n"),
     %% Name属性の取得, Name属性を持つ要素の値のリストをリスト内包表記を用いてフィルタしつつ生成
     Name = case [A#xmlAttribute.value || A <- Attrs, A#xmlAttribute.name == 'name'] of
         %% Valは要素の値、それをbinary = 文字列に変換する
@@ -142,7 +114,7 @@ do_process_node_folder(#xmlElement{name = 'folder', attributes = Attrs, content 
         _ -> <<"unknown">>
     end,
     % 子要素（xmlElement）のみを「元の並び順のまま」再帰的に処理
-    io:format("-> do_process_node ~n"),
+    % io:format("-> do_process_node ~n"),
     Children = [do_process_node(E) || E <- Content, is_record(E, xmlElement)],
 
     % Gleamの User(id, children) にマッピングされるタプル
@@ -152,7 +124,7 @@ do_process_node_folder(#xmlElement{name = 'folder', attributes = Attrs, content 
 
 % item要素の処理
 do_process_node_item(#xmlElement{name = 'item', attributes = Attrs, content = Content}) ->
-    io:format("call do_process_node_item"),
+    % io:format("call do_process_node_item"),
     % Name属性の取得, Name属性を持つ要素の値のリストをリスト内包表記を用いてフィルタしつつ生成
     Name = case [A#xmlAttribute.value || A <- Attrs, A#xmlAttribute.name == 'name'] of
         % Valは要素の値、それをbinary = 文字列に変換する
@@ -178,8 +150,9 @@ do_process_node_item(#xmlElement{name = 'item', attributes = Attrs, content = Co
         [fetch_item_field(I) || I <- Content, is_record(I, xmlElement)]
         ),
     
-    % Gleamの Name(String) にマッピングされるタプル
+    % Gleamに空文字として返すには<<>>を使う必要がある
     EmptyText = <<>>,
+    % Gleamの Name(String) にマッピングされるタプル
     % アトムをGleamのRecordにマッピングさせるための書き方をする
     % こう書くとGleam側では'IDMItem'として扱われる
     {i_d_m_item, Name, Account, Password, Item1, Item2, Comment, Url, EmptyText, EmptyText, EmptyText, EmptyText, EmptyText, EmptyText}.
@@ -232,24 +205,3 @@ do_fetch_item_field(Tag, #xmlElement{content = Content}) ->
     end,
 
     {Tag, Value}.
-
-
-
-
-
-
-%   IDMItem(
-%     title: String,
-%     account: String,
-%     password: String,
-%     item1: #(String, String),
-%     item2: #(String, String),
-%     comment: String,
-%     url: String,
-%     serial_number: String,
-%     e_mail: String,
-%     file: String,
-%     issue_date: String,
-%     expiration_date: String,
-%     paste_type: String,
-%   )

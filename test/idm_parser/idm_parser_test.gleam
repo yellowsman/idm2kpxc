@@ -65,7 +65,7 @@ pub fn empty_item_and_folder_test() {
 // このテストいる？
 // データを整えてから来てくださいって感じがする
 // ここまではしなくて良い気がするから一旦はスキップで
-pub fn invalid_idmpass_mapping_test() {
+pub fn invalid_idmpass_mapping() {
   // Recordへのマッピングに失敗する場合(要素が無い、属性が無い)は、そのデータはスキップする
 
   let body_xml =
