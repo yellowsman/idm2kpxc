@@ -41,12 +41,12 @@ pub fn xml_parse_test() {
     ]
 }
 
-pub fn empty_text_test() {
+pub fn empty_text() {
   // XMLテキストが空文字の場合は空のList(IDMPass)を返す
   assert idm_parser.parse("") == []
 }
 
-pub fn empty_item_test() {
+pub fn empty_item() {
   // アイテムが無い場合はフォルダだけのリストを返す
 
   let body_xml =
@@ -56,12 +56,12 @@ pub fn empty_item_test() {
     == [build_idm_pass_folder("Dummy Folder", [])]
 }
 
-pub fn empty_item_and_folder_test() {
+pub fn empty_item_and_folder() {
   // アイテムもフォルダも無い場合は空リストを返す
   assert idm_parser.parse(build_xml("")) == []
 }
 
-pub fn invalid_idmpass_mapping_test() {
+pub fn invalid_idmpass_mapping() {
   // Recordへのマッピングに失敗する場合(要素が無い、属性が無い)は、そのデータはスキップする
 
   let body_xml =

@@ -19,6 +19,12 @@ pub type IDMPass {
   IDMFolder(title: String, children: List(IDMPass))
 }
 
-pub fn parse(_xml_text: String) -> List(IDMPass) {
-  []
+// 2. Erlangのブリッジ関数をバインド
+@external(erlang, "xml_bridge", "parse_ordered")
+pub fn parse_ordered(xml_string: String) -> List(IDMPass)
+
+pub fn parse(xml_text: String) -> List(IDMPass) {
+  // echo xml_text
+  // []
+  parse_ordered(xml_text)
 }
