@@ -26,5 +26,8 @@ pub fn parse_ordered(xml_string: String) -> List(IDMPass)
 pub fn parse(xml_text: String) -> List(IDMPass) {
   // echo xml_text
   // []
-  parse_ordered(xml_text)
+  case xml_text {
+    "" -> []
+    _ -> parse_ordered(xml_text)
+  }
 }

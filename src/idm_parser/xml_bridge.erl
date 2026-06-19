@@ -7,7 +7,7 @@ parse_ordered(XmlBinary) ->
     % io:format("XmlBinary: ~p~n", [XmlBinary]),
   do_parse_odered(XmlBinary, []).
 
-do_parse_odered([], Acc) -> lists:reverse(Acc);
+do_parse_odered([], Acc) -> lists:flatten(lists:reverse(Acc));
 do_parse_odered([$\n | Rest], Acc) -> do_parse_odered(Rest, Acc); % 改行コードをスキップ
 do_parse_odered([$\r | Rest], Acc) -> do_parse_odered(Rest, Acc);
 do_parse_odered([$\s | Rest], Acc) -> do_parse_odered(Rest, Acc); % スペースをスキップ
