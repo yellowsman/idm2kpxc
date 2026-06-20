@@ -17,6 +17,29 @@ pub type KPXC {
   )
 }
 
+pub fn build_kpxc(
+  group: String,
+  title: String,
+  user_name: String,
+  password: String,
+  url: String,
+  memo: String,
+) -> KPXC {
+  KPXC(
+    group:,
+    title:,
+    user_name:,
+    password:,
+    url:,
+    memo:,
+    tag: "",
+    totp: "",
+    icon: "",
+    updated_at: "",
+    created_at: "",
+  )
+}
+
 pub fn to_csv(input: List(KPXC)) -> String {
   case input {
     [] -> ""
