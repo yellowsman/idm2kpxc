@@ -96,47 +96,32 @@ do_process_node(NodeList) when is_list(NodeList) ->
 
 % 単体データを処理する
 do_process_node(Element) ->
-    % io:format("TargetNodes: ~p~n", [TargetNodes]),
-    % length(TargetNodes)は1件だけ
-    % io:format("call do_process_node ~n"),
-    % TargetNodesがリストじゃないケースもあるのでlengthに渡すとエラーになる
-    % io:format("TargetNodes size: ~p~n", [length(TargetNodes)]),
-
-    % TargetNodesは1件だけしか入っていないので取り出す
-    % 1件じゃないケースもあるので分岐する
-    % Element = case TargetNodes of
-    %              [T] -> T;
-    %              _ -> TargetNodes
-    %             end, 
-
     % io:format("Element: ~p~n", [Element]),
-    %% 変数 XmlData の1番目の要素（レコード名）だけを抽出して表示
     
     
     % === DEBUG ===
     % Type: List
     % Length: 9
     % First 3 elements: [{xmlElement,...},{...}|...]
-    % TargetVar = TargetNodes, 
-    TargetVar = Element, 
+    % TargetVar = Element, 
 
-    if
-        is_tuple(TargetVar) ->
-            io:format("=== DEBUG ===~nType: Tuple (Record)~nName: ~p~n", [element(1, TargetVar)]);
+    % if
+    %     is_tuple(TargetVar) ->
+    %         io:format("=== DEBUG ===~nType: Tuple (Record)~nName: ~p~n", [element(1, TargetVar)]);
             
-        is_list(TargetVar) ->
-            %% リストの場合、全体を表示すると巨大なので、先頭の3要素だけか、長さを表示する
-            io:format("=== DEBUG ===~nType: List~nLength: ~p~nFirst 3 elements: ~P~n", [length(TargetVar), TargetVar, 3]);
-            % io:format("=== DEBUG ===~nType: List~nLength: ~p~nFirst 3 elements: ~p~n", [length(TargetVar), hd(TargetVar)]);
+    %     is_list(TargetVar) ->
+    %         %% リストの場合、全体を表示すると巨大なので、先頭の3要素だけか、長さを表示する
+    %         io:format("=== DEBUG ===~nType: List~nLength: ~p~nFirst 3 elements: ~P~n", [length(TargetVar), TargetVar, 3]);
+    %         % io:format("=== DEBUG ===~nType: List~nLength: ~p~nFirst 3 elements: ~p~n", [length(TargetVar), hd(TargetVar)]);
             
-        is_binary(TargetVar) ->
-            %% バイナリ（文字列）の場合、先頭の20バイトだけ表示する
-            <<Prefix:20/binary, _/binary>> = <<TargetVar/binary, "                    ">>,
-            io:format("=== DEBUG ===~nType: Binary (String)~nPrefix: ~p~n", [Prefix]);
+    %     is_binary(TargetVar) ->
+    %         %% バイナリ（文字列）の場合、先頭の20バイトだけ表示する
+    %         <<Prefix:20/binary, _/binary>> = <<TargetVar/binary, "                    ">>,
+    %         io:format("=== DEBUG ===~nType: Binary (String)~nPrefix: ~p~n", [Prefix]);
             
-        true ->
-            io:format("=== DEBUG ===~nType: Other~nRaw: ~p~n", [TargetVar])
-    end,
+    %     true ->
+    %         io:format("=== DEBUG ===~nType: Other~nRaw: ~p~n", [TargetVar])
+    % end,
 
     % ここでfolderやitemにパターンマッチしていないらしい
     % それ以外の形式になってるってこと？
@@ -185,11 +170,6 @@ do_process_node_item(#xmlElement{name = 'item', attributes = Attrs, content = Co
         _ -> <<"unknown">>
     end,
 
-    % TODO Contentの中身を取り出す処理が書けていない
-    % リストだろうがタプルだろうが、パターンマッチさせるには左右の辺で位置を揃える必要がある
-    % つまり、パターンマッチさせたい順に右辺側を処理する必要がある
-    % 問題は、ループの中の各項目がどの値を持っているか分からない点
-    % XML側の並びが一定かつループも毎回同じ順番で回ることを前提としてパターンマッチさせる
     [
         {account, Account},
         {password, Password},
