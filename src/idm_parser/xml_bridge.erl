@@ -4,7 +4,7 @@
 -include_lib("xmerl/include/xmerl.hrl").
 
 parse_ordered(XmlBinary) ->
-    % io:format("XmlBinary: ~p~n", [XmlBinary]),
+  % io:format("XmlBinary: ~p~n", [XmlBinary]),
   do_parse_odered(XmlBinary, []).
 
 do_parse_odered([], Acc) -> lists:flatten(lists:reverse(Acc));
@@ -14,10 +14,19 @@ do_parse_odered([$\s | Rest], Acc) -> do_parse_odered(Rest, Acc); % スペース
 do_parse_odered([$\t | Rest], Acc) -> do_parse_odered(Rest, Acc);
 do_parse_odered(XmlBinary, Acc) ->
     % 文字列に日本語が含まれているとエラーになる & バイナリでもcharacter listでも対応できる
-    XmlCharList = unicode:characters_to_list(XmlBinary),
-    % io:format("XmlCharList: ~p~n", [XmlCharList]),
+    XmlCharList = unicode:characters_to_list(XmlBinary, utf8),
+
+    % io:format("XmlCharList: ~ts~n", [XmlCharList]),
     % Restは文字列のまま
-    {XmlData, Rest} = xmerl_scan:string(XmlCharList),
+    Options = [
+        % {document, true}, % これは不要だった、XmlDocumentになってしまう
+        {space, normalize},
+        {encoding, 'iso-8859-1'} % この指定をしないとXMLテキストの先頭で定義されているUTF-8の宣言にxmerl_scan:stringが引っ張られる
+    ],
+    {XmlData, Rest} = xmerl_scan:string(XmlCharList, Options),
+    % {XmlData, Rest} = xmerl_scan:string(XmlCharList),
+    % {XmlData, Rest} = xmerl_scan:file("input/endo2-utf8.xml"),
+
     % io:format("XmlData: ~p~n", [XmlData]),
     % ここに再帰処理を足し込む
     % io:format("Rest: ~p~n", [Rest]),
@@ -70,14 +79,23 @@ filter_element(Child) ->
         _ -> false
     end.
 
+% 処理に使わないXMLの要素を削除
 trim_xml_element(#xmlElement{name = 'idmData', content = Children}) ->
     % io:format("Children: ~p~n", [Children]),
     [
         Child || Child <- Children, filter_element(Child)
     ].
 
+% 空配列なら何もしない
+do_process_node([]) -> [];
 
-do_process_node(TargetNodes) ->
+% 引数が「リスト（配列）」の場合はループして単体用関数に回す
+do_process_node(NodeList) when is_list(NodeList) ->
+    %% リスト内包表記を使って、リストの全要素を1つずつ単体用の関数に放り込む
+    [do_process_node(Node) || Node <- NodeList];
+
+% 単体データを処理する
+do_process_node(Element) ->
     % io:format("TargetNodes: ~p~n", [TargetNodes]),
     % length(TargetNodes)は1件だけ
     % io:format("call do_process_node ~n"),
@@ -86,19 +104,54 @@ do_process_node(TargetNodes) ->
 
     % TargetNodesは1件だけしか入っていないので取り出す
     % 1件じゃないケースもあるので分岐する
-    Element = case TargetNodes of
-                 [T] -> T;
-                 _ -> TargetNodes
-                end,
+    % Element = case TargetNodes of
+    %              [T] -> T;
+    %              _ -> TargetNodes
+    %             end, 
 
+    % io:format("Element: ~p~n", [Element]),
+    %% 変数 XmlData の1番目の要素（レコード名）だけを抽出して表示
+    
+    
+    % === DEBUG ===
+    % Type: List
+    % Length: 9
+    % First 3 elements: [{xmlElement,...},{...}|...]
+    % TargetVar = TargetNodes, 
+    TargetVar = Element, 
+
+    if
+        is_tuple(TargetVar) ->
+            io:format("=== DEBUG ===~nType: Tuple (Record)~nName: ~p~n", [element(1, TargetVar)]);
+            
+        is_list(TargetVar) ->
+            %% リストの場合、全体を表示すると巨大なので、先頭の3要素だけか、長さを表示する
+            io:format("=== DEBUG ===~nType: List~nLength: ~p~nFirst 3 elements: ~P~n", [length(TargetVar), TargetVar, 3]);
+            % io:format("=== DEBUG ===~nType: List~nLength: ~p~nFirst 3 elements: ~p~n", [length(TargetVar), hd(TargetVar)]);
+            
+        is_binary(TargetVar) ->
+            %% バイナリ（文字列）の場合、先頭の20バイトだけ表示する
+            <<Prefix:20/binary, _/binary>> = <<TargetVar/binary, "                    ">>,
+            io:format("=== DEBUG ===~nType: Binary (String)~nPrefix: ~p~n", [Prefix]);
+            
+        true ->
+            io:format("=== DEBUG ===~nType: Other~nRaw: ~p~n", [TargetVar])
+    end,
+
+    % ここでfolderやitemにパターンマッチしていないらしい
+    % それ以外の形式になってるってこと？
+    % trimがうまくいってないのかも
     case Element of
         #xmlElement{name = 'folder'} -> 
-            % io:format("match folder ~n"),
+            io:format("match folder ~n"),
             % io:format("folder element: ~p~n", [Element]),
             do_process_node_folder(Element);
         #xmlElement{name = 'item'} -> 
-            % io:format("match item ~n"),
+            io:format("match item ~n"),
             do_process_node_item(Element);
+        #xmlElement{name = Name} -> 
+            io:format("match ~p~n", [Name]),
+            "";
         _ -> "" % ここの分岐には来ていない
     end.
 
@@ -110,7 +163,7 @@ do_process_node_folder(#xmlElement{name = 'folder', attributes = Attrs, content 
     %% Name属性の取得, Name属性を持つ要素の値のリストをリスト内包表記を用いてフィルタしつつ生成
     Name = case [A#xmlAttribute.value || A <- Attrs, A#xmlAttribute.name == 'name'] of
         %% Valは要素の値、それをbinary = 文字列に変換する
-        [Val] -> list_to_binary(Val);
+        [Val] -> unicode:characters_to_binary(Val);
         _ -> <<"unknown">>
     end,
     % 子要素（xmlElement）のみを「元の並び順のまま」再帰的に処理
@@ -128,7 +181,7 @@ do_process_node_item(#xmlElement{name = 'item', attributes = Attrs, content = Co
     % Name属性の取得, Name属性を持つ要素の値のリストをリスト内包表記を用いてフィルタしつつ生成
     Name = case [A#xmlAttribute.value || A <- Attrs, A#xmlAttribute.name == 'name'] of
         % Valは要素の値、それをbinary = 文字列に変換する
-        [Val] -> list_to_binary(Val);
+        [Val] -> unicode:characters_to_binary(Val);
         _ -> <<"unknown">>
     end,
 
@@ -172,12 +225,12 @@ do_fetch_item_field(item1, #xmlElement{attributes = Attrs, content = Content}) -
     % Name属性の取得, Name属性を持つ要素の値のリストをリスト内包表記を用いてフィルタしつつ生成
     Name = case [A#xmlAttribute.value || A <- Attrs, A#xmlAttribute.name == 'name'] of
         %% Valは要素の値、それをbinary = 文字列に変換する
-        [Val] -> list_to_binary(Val);
+        [Val] -> unicode:characters_to_binary(Val);
         _ -> <<"unknown">>
     end,
 
     Value = case [T || T <- Content, is_record(T, xmlText)] of
-        [TextNode] -> list_to_binary(TextNode#xmlText.value);
+        [TextNode] -> unicode:characters_to_binary(TextNode#xmlText.value);
         _ -> <<>>
     end,
 
@@ -187,12 +240,12 @@ do_fetch_item_field(item2, #xmlElement{attributes = Attrs, content = Content}) -
     % Name属性の取得, Name属性を持つ要素の値のリストをリスト内包表記を用いてフィルタしつつ生成
     Name = case [A#xmlAttribute.value || A <- Attrs, A#xmlAttribute.name == 'name'] of
         % Valは要素の値、それをbinary = 文字列に変換する
-        [Val] -> list_to_binary(Val);
+        [Val] -> unicode:characters_to_binary(Val);
         _ -> <<"unknown">>
     end,
 
     Value = case [T || T <- Content, is_record(T, xmlText)] of
-        [TextNode] -> list_to_binary(TextNode#xmlText.value);
+        [TextNode] -> unicode:characters_to_binary(TextNode#xmlText.value);
         _ -> <<>>
     end,
 
@@ -200,7 +253,7 @@ do_fetch_item_field(item2, #xmlElement{attributes = Attrs, content = Content}) -
 
 do_fetch_item_field(Tag, #xmlElement{content = Content}) ->
     Value = case [T || T <- Content, is_record(T, xmlText)] of
-        [TextNode] -> list_to_binary(TextNode#xmlText.value);
+        [TextNode] -> unicode:characters_to_binary(TextNode#xmlText.value);
         _ -> <<>>
     end,
 

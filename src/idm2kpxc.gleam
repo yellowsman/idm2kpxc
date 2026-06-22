@@ -14,15 +14,16 @@ pub fn run(arguments: List(String)) -> Nil {
     [input_file_path, output_file_path]
     | ["-i", input_file_path, "-o", output_file_path]
     | ["--input", input_file_path, "--output", output_file_path] ->
-      // ファイル読み込み
       simplifile.read(input_file_path)
+      // |> echo
       |> result.unwrap("")
+      // |> echo
       // XMLテキストをCSVテキストに変換
       |> converter.convert()
+      |> echo
       // ファイル書き込み
       |> simplifile.write(output_file_path, _)
       |> result.unwrap(Nil)
-
     _ ->
       io.println("usage: ./program -i <input_file_path> -o <output_file_path>")
   }
