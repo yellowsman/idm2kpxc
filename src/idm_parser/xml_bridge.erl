@@ -27,6 +27,7 @@ do_parse_odered(XmlBinary, Acc) ->
     % {XmlData, Rest} = xmerl_scan:string(XmlCharList),
     % {XmlData, Rest} = xmerl_scan:file("input/endo2-utf8.xml"),
 
+    % この時点で特殊文字がデコードされている
     % io:format("XmlData: ~p~n", [XmlData]),
     % ここに再帰処理を足し込む
     % io:format("Rest: ~p~n", [Rest]),
@@ -128,15 +129,12 @@ do_process_node(Element) ->
     % trimがうまくいってないのかも
     case Element of
         #xmlElement{name = 'folder'} -> 
-            io:format("match folder ~n"),
+            % io:format("match folder ~n"),
             % io:format("folder element: ~p~n", [Element]),
             do_process_node_folder(Element);
         #xmlElement{name = 'item'} -> 
-            io:format("match item ~n"),
+            % io:format("match item ~n"),
             do_process_node_item(Element);
-        #xmlElement{name = Name} -> 
-            io:format("match ~p~n", [Name]),
-            "";
         _ -> "" % ここの分岐には来ていない
     end.
 
@@ -231,6 +229,16 @@ do_fetch_item_field(item2, #xmlElement{attributes = Attrs, content = Content}) -
 
     {item2, {Name, Value}};
 
+% paasswordの文字列は再エスケープして元の文字列をそのままコンバート先に使う
+do_fetch_item_field(password, #xmlElement{content = Content}) ->
+    Value = case [T || T <- Content, is_record(T, xmlText)] of
+        [TextNode] -> escape_special_chars(unicode:characters_to_binary(TextNode#xmlText.value));
+        _ -> <<>>
+    end,
+
+    % io:format("do_fetch_item_field Value: ~s~n", [Value]),
+    {password, Value};
+
 do_fetch_item_field(Tag, #xmlElement{content = Content}) ->
     Value = case [T || T <- Content, is_record(T, xmlText)] of
         [TextNode] -> unicode:characters_to_binary(TextNode#xmlText.value);
@@ -238,3 +246,22 @@ do_fetch_item_field(Tag, #xmlElement{content = Content}) ->
     end,
 
     {Tag, Value}.
+
+
+% パスワードに含まれるデコードされた文字を再エスケープする
+escape_special_chars(Binary) when is_binary(Binary) ->
+    % 1. 一旦バイナリをリスト(Unicodeコードポイントのリスト)に変換
+    List = unicode:characters_to_list(Binary, utf8),
+    
+    % 2. 1文字ずつ安全にチェックして置換
+    EscapedList = lists:flatmap(fun
+        ($&) -> "&amp;";
+        ($<) -> "&lt;";
+        ($>) -> "&gt;";
+        ($") -> "&quot;";
+        ($') -> "&apos;";
+        (Char) -> [Char] %% その他の文字はそのまま
+    end, List),
+    
+    % 3. 最後にバイナリに戻す
+    unicode:characters_to_binary(EscapedList).

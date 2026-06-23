@@ -111,7 +111,7 @@ fn fixture_data_xml() -> String {
         <folder name=\"Nested Dummy Folder\" open=\"true\" selected=\"false\">
             <item name=\"Nested Dummy Service\" selected=\"false\">
                 <account name=\"Account ID\">Nested dummy_account</account>
-                <password name=\"Password\">Nested dummy_password</password>
+                <password name=\"Password\">&gt;W7`5ui</password>
                 <item1 name=\"first item\">Nested ダミーアイテム1</item1>
                 <item2 name=\"\"></item2>
                 <serialNumber></serialNumber>
@@ -128,5 +128,5 @@ fn fixture_data_xml() -> String {
 }
 
 fn expected_data_csv() -> String {
-  "group,title,user_name,password,url,memo,tag,totp,icon,updated_at,created_at\nDummy Folder,Dummy Service,dummy_account,dummy_password,,\"comment1\n\n[item1]\ndummy_item1\",,,,,\nDummy Folder,Dummy Service2,dummy_account2,dummy_password2,,\"comment2\n\n[item1]\ndummy_item1-2\n\n[second item]\ndummy item2-2\",,,,,\nDummy Folder/Nested Dummy Folder,Nested Dummy Service,Nested dummy_account,Nested dummy_password,,\"Nested comment1\n\n[first item]\nNested ダミーアイテム1\",,,,,\n"
+  "group,title,user_name,password,url,memo,tag,totp,icon,updated_at,created_at\nDummy Folder,Dummy Service,dummy_account,dummy_password,,\"comment1\n\n[item1]\ndummy_item1\",,,,,\nDummy Folder,Dummy Service2,dummy_account2,dummy_password2,,\"comment2\n\n[item1]\ndummy_item1-2\n\n[second item]\ndummy item2-2\",,,,,\nDummy Folder/Nested Dummy Folder,Nested Dummy Service,Nested dummy_account,&gt;W7`5ui,,\"Nested comment1\n\n[first item]\nNested ダミーアイテム1\",,,,,\n"
 }
