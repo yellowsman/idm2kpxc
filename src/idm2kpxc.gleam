@@ -14,20 +14,21 @@ pub fn run(arguments: List(String)) -> Nil {
     | ["-i", input_file_path, "-o", output_file_path]
     | ["--input", input_file_path, "--output", output_file_path] -> {
       case simplifile.read(input_file_path) {
+        Error(simplifile.NotUtf8) ->
+          error_message("File encoding is not UTF-8.")
         Error(_) ->
-          io.println_error(
-            "[Error]Could not load the file, input_file_path: "
-            <> input_file_path,
+          error_message(
+            "Could not load the file, input_file_path: " <> input_file_path,
           )
-        Ok("") -> io.println_error("Error: file empty.")
+        Ok("") -> error_message("Error: file empty.")
         Ok(read_text) -> {
           case converter.convert(read_text) {
-            "" -> io.println_error("[Error]Convert process was unsuccessful.")
+            "" -> error_message("Convert process was unsuccessful.")
             convert_text -> {
               case simplifile.write(output_file_path, convert_text) {
                 Error(_) ->
-                  io.println_error(
-                    "[Error]Could not write the file, output_file_path: "
+                  error_message(
+                    "Could not write the file, output_file_path: "
                     <> output_file_path,
                   )
                 Ok(_) -> {
@@ -45,4 +46,8 @@ pub fn run(arguments: List(String)) -> Nil {
   }
 
   io.println("Finish idm2kpxc.")
+}
+
+fn error_message(message: String) -> Nil {
+  io.println_error("[Error]" <> message)
 }
