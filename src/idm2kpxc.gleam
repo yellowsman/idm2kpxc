@@ -16,25 +16,17 @@ pub fn run(arguments: List(String)) -> Nil {
       case simplifile.read(input_file_path) {
         Error(simplifile.NotUtf8) ->
           error_message("File encoding is not UTF-8.")
-        Error(_) ->
-          error_message(
-            "Could not load the file, input_file_path: " <> input_file_path,
-          )
+        Error(_) -> error_message("Could not load the file")
         Ok("") -> error_message("File is empty.")
         Ok(read_text) -> {
           case converter.convert(read_text) {
             "" -> error_message("Convert process was unsuccessful.")
             convert_text -> {
               case simplifile.write(output_file_path, convert_text) {
-                Error(_) ->
-                  error_message(
-                    "Could not write the file, output_file_path: "
-                    <> output_file_path,
-                  )
-                Ok(_) -> {
-                  io.println("Export success!")
-                  io.println("Output to " <> output_file_path)
-                }
+                Error(simplifile.Enoent) ->
+                  error_message("No such file or directory.")
+                Error(_) -> error_message("Could not write the file")
+                Ok(_) -> io.println("Convert success!")
               }
             }
           }
