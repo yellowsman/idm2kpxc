@@ -20,7 +20,7 @@ pub fn run(arguments: List(String)) -> Nil {
           error_message(
             "Could not load the file, input_file_path: " <> input_file_path,
           )
-        Ok("") -> error_message("Error: file empty.")
+        Ok("") -> error_message("File is empty.")
         Ok(read_text) -> {
           case converter.convert(read_text) {
             "" -> error_message("Convert process was unsuccessful.")
