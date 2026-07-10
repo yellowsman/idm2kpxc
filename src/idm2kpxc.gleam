@@ -2,6 +2,7 @@ import argv
 import converter
 import gleam/io
 import gleam/string
+import gleam_community/ansi
 import simplifile
 
 pub fn main() -> Nil {
@@ -45,13 +46,27 @@ fn help_message() -> Nil {
     "Converts ID Manager export files into a KeePassXC importable format\n",
     "This program converts an ID Manager exported backup file into a format compatible with KeePassXC",
     "Backup file must be UTF-8 (convert from Shift-JIS before running)\n",
-    "Usage: ./idm2kpxc <XML_FILE_PATH> <CSV_FILE_PATH>\n",
-    "Arguments:",
+    string.concat([
+      text_yellow("Usage:"),
+      " ",
+      text_green("./idm2kpxc"),
+      " ",
+      "<XML_FILE_PATH> <CSV_FILE_PATH>\n",
+    ]),
+    text_yellow("Arguments:"),
     "  <XML_FILE_PATH>  ID Manager Backup file (XML format): must be UTF-8 (convert from Shift-JIS before running)",
     "  <CSV_FILE_PATH>  KeePassXC-importable file (CSV format) generated at the specified path\n",
-    "Options:",
-    "  -h, --help  Print help",
+    text_yellow("Options:"),
+    string.concat([text_green("  -h, --help"), "  Print help"]),
   ]
   |> string.join(with: "\n")
   |> io.println()
+}
+
+fn text_yellow(text: String) -> String {
+  ansi.yellow(text)
+}
+
+fn text_green(text: String) -> String {
+  ansi.green(text)
 }
