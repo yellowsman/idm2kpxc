@@ -10,9 +10,7 @@ pub fn main() -> Nil {
 
 pub fn run(arguments: List(String)) -> Nil {
   case arguments {
-    [input_file_path, output_file_path]
-    | ["-i", input_file_path, "-o", output_file_path]
-    | ["--input", input_file_path, "--output", output_file_path] -> {
+    [input_file_path, output_file_path] -> {
       case simplifile.read(input_file_path) {
         Error(simplifile.NotUtf8) ->
           error_message("File encoding is not UTF-8.")
@@ -33,8 +31,7 @@ pub fn run(arguments: List(String)) -> Nil {
         }
       }
     }
-    _ ->
-      io.println("usage: ./program -i <input_file_path> -o <output_file_path>")
+    _ -> io.println("usage: ./program <input_file_path> <output_file_path>")
   }
 
   io.println("Finish idm2kpxc.")
