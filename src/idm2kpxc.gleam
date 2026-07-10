@@ -33,8 +33,6 @@ pub fn run(arguments: List(String)) -> Nil {
     }
     _ -> io.println("usage: ./program <input_file_path> <output_file_path>")
   }
-
-  io.println("Finish idm2kpxc.")
 }
 
 fn error_message(message: String) -> Nil {
