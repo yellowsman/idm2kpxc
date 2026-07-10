@@ -15,6 +15,7 @@ packages = [
   { name = "gleam_regexp", version = "1.1.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleam_regexp", source = "hex", outer_checksum = "9C215C6CA84A5B35BB934A9B61A9A306EC743153BE2B0425A0D032E477B062A9" },
   { name = "gleam_stdlib", version = "1.0.3", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "1F543AFBA5D33DA493E6087F4E4C4F20D899411343512686C98A8ABB2963CF22" },
   { name = "glearray", version = "2.1.2", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "glearray", source = "hex", outer_checksum = "1554E48DD40114D7602F5BFF4D7278B6B3B735F137C7FDEEADFB2FE7951C94BE" },
+  { name = "gleave", version = "1.0.1", build_tools = ["gleam"], requirements = [], otp_app = "gleave", source = "hex", outer_checksum = "E34C23F8AD68A3DB19F19EE044193137B0245CB5CEFF83B3B310BD584BF74A07" },
   { name = "gleeunit", version = "1.11.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleeunit", source = "hex", outer_checksum = "EC31ABA74256AEA531EDF8169931D775BBB384FED0A8A1BDC4DD9354E3E21826" },
   { name = "gsv", version = "5.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib", "glearray", "splitter"], otp_app = "gsv", source = "hex", outer_checksum = "D87707CA4802F7BFBA648DE86E89E0C2F37ABABB9C74C02F0D20019BB6F5791C" },
   { name = "simplifile", version = "2.4.0", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib"], otp_app = "simplifile", source = "hex", outer_checksum = "7C18AFA4FED0B4CE1FA5B0B4BAC1FA1744427054EA993565F6F3F82E5453170D" },
@@ -25,6 +26,7 @@ packages = [
 argv = { version = ">= 1.1.0 and < 2.0.0" }
 gleam_community_ansi = { version = ">= 1.5.0 and < 2.0.0" }
 gleam_stdlib = { version = ">= 1.0.0 and < 2.0.0" }
+gleave = { version = ">= 1.0.1 and < 2.0.0" }
 gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
 gsv = { version = ">= 5.1.0 and < 6.0.0" }
 simplifile = { version = ">= 2.4.0 and < 3.0.0" }

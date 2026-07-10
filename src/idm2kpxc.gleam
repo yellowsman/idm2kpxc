@@ -3,6 +3,7 @@ import converter
 import gleam/io
 import gleam/string
 import gleam_community/ansi
+import gleave
 import simplifile
 
 pub fn main() -> Nil {
@@ -15,17 +16,17 @@ pub fn run(arguments: List(String)) -> Nil {
     [input_file_path, output_file_path] -> {
       case simplifile.read(input_file_path) {
         Error(simplifile.NotUtf8) ->
-          error_message("File encoding is not UTF-8.")
-        Error(_) -> error_message("Could not load the file")
-        Ok("") -> error_message("File is empty.")
+          error_response("File encoding is not UTF-8.")
+        Error(_) -> error_response("Could not load the file")
+        Ok("") -> error_response("File is empty.")
         Ok(read_text) -> {
           case converter.convert(read_text) {
-            "" -> error_message("Convert process was unsuccessful.")
+            "" -> error_response("Convert process was unsuccessful.")
             convert_text -> {
               case simplifile.write(output_file_path, convert_text) {
                 Error(simplifile.Enoent) ->
-                  error_message("No such file or directory.")
-                Error(_) -> error_message("Could not write the file")
+                  error_response("No such file or directory.")
+                Error(_) -> error_response("Could not write the file")
                 Ok(_) -> io.println("Convert success!")
               }
             }
@@ -37,8 +38,9 @@ pub fn run(arguments: List(String)) -> Nil {
   }
 }
 
-fn error_message(message: String) -> Nil {
+fn error_response(message: String) -> Nil {
   io.println_error("[Error]" <> message)
+  gleave.exit(1)
 }
 
 fn help_message() -> Nil {
