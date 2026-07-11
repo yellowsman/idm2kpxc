@@ -1,24 +1,53 @@
-# idm2kpxc
+# 概要
 
-[![Package Version](https://img.shields.io/hexpm/v/idm2kpxc)](https://hex.pm/packages/idm2kpxc)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/idm2kpxc/)
+このプログラムは、ID ManagerがエクスポートしたデータをKeePassXCへインポートできる形式へ変換するためのものです
 
-```sh
-gleam add idm2kpxc@1
+# 動作環境
+
+このプログラムはWindowsおよびLinux環境(WSL)での動作を想定しています
+
+# 入手方法
+
+2通りの入手方法があります
+
+## 1. escriptをダウンロードする
+
+[リリースページ](https://github.com/yellowsman/idm2kpxc/releases/tag/v1.0.0)からビルド済のescriptファイルをダウンロードして実行します
+
+- 実行環境の構築が不要ですぐに実行できます  
+- Windows環境では実行できないため、WSLやLinux環境で実行してください
+
+
+## 2. ソースコードからビルドする
+
+ソースコードをダウンロードしてgleam runで実行します
+  - Gleamの実行環境の構築が必要です
+  - Windows環境でも実行可能です
+    - [Windows環境でのセットアップ方法](https://gleam.run/install/windows/gleam/)
+
+# 事前準備
+
+ID Managerが出力するバックアップファイルの文字コードはShift-JISです  
+処理のため文字コードをUTF-8に変換してください  
+ファイルの1行目にある文字コードの指定(`encoding="shift-jis"`)は変更不要です  
+
+# 実行方法
+
+escriptでの実行方法で説明しますが、ソースコードから実行する場合でもオプションは同じです
+
 ```
-```gleam
-import idm2kpxc
+./idm2kpxc --help
+Converts ID Manager export files into a KeePassXC importable format
 
-pub fn main() -> Nil {
-  // TODO: An example of the project in use
-}
-```
+This program converts an ID Manager exported backup file into a format compatible with KeePassXC
+Backup file must be UTF-8 (convert from Shift-JIS before running)
 
-Further documentation can be found at <https://hexdocs.pm/idm2kpxc>.
+Usage: ./idm2kpxc <XML_FILE_PATH> <CSV_FILE_PATH>
 
-## Development
+Arguments:
+  <XML_FILE_PATH>  ID Manager Backup file (XML format): must be UTF-8 (convert from Shift-JIS before running)
+  <CSV_FILE_PATH>  KeePassXC-importable file (CSV format) generated at the specified path
 
-```sh
-gleam run   # Run the project
-gleam test  # Run the tests
+Options:
+  -h, --help  Print help
 ```
