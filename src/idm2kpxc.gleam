@@ -40,6 +40,7 @@ pub fn run(arguments: List(String)) -> Nil {
 
 fn error_response(message: String) -> Nil {
   io.println_error("[Error]" <> message)
+  // エラー時はステータスコードを1(失敗)にする
   gleave.exit(1)
 }
 

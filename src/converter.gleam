@@ -9,7 +9,6 @@ pub fn convert(xml_text: String) -> String {
   // 2. List(IDMPASS)をList(KPXC)に変換する
   |> flatten()
   |> list.reverse()
-  // |> echo
   // 3. List(KPXC)をCSVテキストに変換して返却する
   |> kpxc_serializer.to_csv()
 }
