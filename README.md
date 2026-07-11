@@ -40,17 +40,17 @@ escriptによる実行方法で説明します
 
 ```
 ./idm2kpxc --help
-Converts ID Manager export files into a KeePassXC importable format
+Converts ID Manager backup files into a KeePassXC importable format.
 
-This program converts an ID Manager exported backup file into a format compatible with KeePassXC
-Backup file must be UTF-8 (convert from Shift-JIS before running)
+This program converts an ID Manager exported backup file into a format compatible with KeePassXC.
+Backup file must be UTF-8 (convert from Shift-JIS before running).
 
 Usage: ./idm2kpxc <XML_FILE_PATH> <CSV_FILE_PATH>
 
 Arguments:
-  <XML_FILE_PATH>  ID Manager Backup file (XML format): must be UTF-8 (convert from Shift-JIS before running)
-  <CSV_FILE_PATH>  KeePassXC-importable file (CSV format) generated at the specified path
+  <XML_FILE_PATH>  ID Manager backup file (XML format): must be UTF-8 (convert from Shift-JIS before running).
+  <CSV_FILE_PATH>  KeePassXC-importable file (CSV format) generated at the specified path.
 
 Options:
-  -h, --help  Print help
+  -h, --help  Print help.
 ```
