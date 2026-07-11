@@ -14,7 +14,7 @@
 
 ### 1. escriptをダウンロードする
 
-[リリースページ](https://github.com/yellowsman/idm2kpxc/releases/tag/v1.0.0)からビルド済のescriptファイルをダウンロードして実行します
+[リリースページ](https://github.com/yellowsman/idm2kpxc/releases/tag/v1.0.0)からビルド済のidm2kpxcファイルをダウンロードして実行します
 
 - 実行環境の構築が不要ですぐに実行できます  
 - Windows環境では実行できないため、WSLやLinux環境で実行してください
